@@ -78,7 +78,6 @@
             <configuration>
               <alias>RSA4096</alias>
               <keystore>
-                <path>NONE</path>
                 <storetype>KMS</storetype>
               </keystore>
               <certchain>@project.basedir@/src/it/kms-cert.pem</certchain>

@@ -30,14 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class IdentityBuilderTest {
 
    @Test
-   public void testKeyStoreNonePath()
-      throws Exception
-   {
-      IdentityBuilder builder = new IdentityBuilder();
-      builder.keyStore(Paths.get("NONE"));
-   }
-
-   @Test
    public void testKeyStorePath()
       throws Exception
    {
@@ -148,7 +140,7 @@ public class IdentityBuilderTest {
       throws Exception
    {
       IdentityBuilder builder = new IdentityBuilder();
-      assertThrows(NoSuchFileException.class, ()-> {
+      assertThrows(UnrecoverableKeyException.class, ()-> {
          builder.storeType("JKS").storePass(password("changeit")).keyPass(password("key-passwd")).alias("foo_alias").build();
       });
    }
@@ -162,7 +154,9 @@ public class IdentityBuilderTest {
    {
       IdentityBuilder builder = new IdentityBuilder();
       CertPathValidatorException thrown = assertThrows(CertPathValidatorException.class, ()-> {
-         builder.keyStore(Paths.get("src", "test", "keystore"))
+
+         builder.trustStore(TrustStore.Builder.create().build())
+                  .keyStore(Paths.get("src", "test", "keystore"))
                   .storeType("JKS").storePass(password("changeit"))
                   .keyPass(password("key-passwd"))
                   .alias("foo_alias").strict(true).build();

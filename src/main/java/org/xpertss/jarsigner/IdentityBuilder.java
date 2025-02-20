@@ -12,8 +12,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -40,9 +38,6 @@ import java.util.stream.Collectors;
  *  checking, overriding the default trusted ca certs database in java.
  */
 public class IdentityBuilder {
-
-   private static final Path NONE = Paths.get("NONE");
-
 
    private String alias;
    private String storeType;
@@ -107,7 +102,7 @@ public class IdentityBuilder {
    public IdentityBuilder keyStore(Path keyStore)
       throws NoSuchFileException
    {
-      if(keyStore != null && !keyStore.equals(NONE) && (!Files.exists(keyStore) || !Files.isReadable(keyStore))) {
+      if(keyStore != null && (!Files.exists(keyStore) || !Files.isReadable(keyStore))) {
          throw new NoSuchFileException(String.format("Keystore %s not found", keyStore));
       }
       this.keyStore = keyStore;
@@ -184,21 +179,21 @@ public class IdentityBuilder {
 
    public Identity build()
       throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException,
-               UnrecoverableEntryException, InvalidAlgorithmParameterException, CertPathValidatorException
+               UnrecoverableEntryException, CertPathValidatorException
    {
       try {
          if(alias == null) throw new NullPointerException("Identity alias cannot be null");
 
          KeyStore store = createKeyStoreInstance();
-         if(keyStore == null) keyStore = Paths.get(System.getProperty("user.home"), "keystore");
-         if(keyStore.equals(NONE)) {
-            store.load(() -> storePass);
+         if(keyStore == null) {
+            store.load(null, (storePass != null) ? storePass.getPassword() : null);
+            //store.load(() -> storePass);
          } else if(Files.exists(keyStore)) {
             try(InputStream input = Files.newInputStream(keyStore)) {
                store.load(input, (storePass != null) ? storePass.getPassword() : null);
             }
          } else {
-            throw new NoSuchFileException("No keystore file could be found");
+            throw new NoSuchFileException("The keystore file could not be found");
          }
 
          KeyStore.PasswordProtection pass = (keyPass != null) ? keyPass : storePass;
@@ -230,8 +225,7 @@ public class IdentityBuilder {
          }
 
 
-         if(strict) {
-            if(trustStore == null) trustStore = TrustStore.Builder.create().build();
+         if(strict && trustStore != null) {
             trustStore.validate(chain, KeyUsage.CodeSigning);
          }
 

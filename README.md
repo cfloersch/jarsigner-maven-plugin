@@ -33,7 +33,6 @@ Example usage
             <providerClass>xpertss.crypto.kms.provider.KmsProvider</providerClass>
           </providers>
           <keystore>
-            <path>NONE</path>
             <storetype>KMS</storetype>
           </keystore>
           <certchain>kms-rsa4096-certchain.pem</certchain>
@@ -104,7 +103,6 @@ Service  (KMS). This implementation allows you to define both parts of the ident
 
 ```xml
       <keystore>
-        <path>NONE</path>
         <storetype>KMS</storetype>
       </keystore>
       <certchain>kms-rsa4096-certchain.pem</certchain>
@@ -115,6 +113,16 @@ The keystore provides access to the underlying private key in a network centric 
 The associated certificate is specified separately in a file located on the disk. In this case the
 credentials necessary to access the keystore are provided in a more AWS centric way and do not need
 to be included in the maven configuration.
+
+A more traditional keystore would be setup like:
+
+```xml
+      <keystore>
+        <path>@project.basedir@/keystore.pfx</path>
+        <storetype>PKCS12</storetype>
+        <storepass>changeme</storepass>
+      </keystore>
+```
 
 
 Trust Store
@@ -213,6 +221,26 @@ associated with the archives, and or directories to sign are the same. Other par
 those in the Apache variant include `keypass`, `sigfile`, and `alias`.
 
 
+Default Keystore
+----------------
+
+In the standard jarsigner tool if keystore (aka path to keystore) is absent, it would default to using a keystore
+with the filename `${user.home}/keystore`. To exclude a file all together one needed to use `-keystore NONE`. That
+is not necessary here. The absence of the `path` parameter indicates no source file. If you wish to use the classic
+default you will need to explicitly indicate that:
+
+```xml
+   <configuration>
+      <keystore>
+         <path>${user.home}/keystore</path>
+         <storetype>JKS</storetype>
+         <storepass>changeme</storepass>
+      </keystore>
+      <alias>test-01</alias>
+   </configuration>
+```
+
+
 Designated Algorithms
 ---------------------
 
@@ -224,7 +252,6 @@ and the key is really just a pointer to a network resource.
 ```xml
    <configuration>
       <keystore>
-         <path>NONE</path>
          <storetype>KMS</storetype>
          <provider>KMS</provider>
       </keystore>
@@ -259,7 +286,6 @@ signature services.
           <providerArg>path/to/pkcs11/properties.cfg</providerArg>
       </providers>
       <keystore>
-         <path>NONE</path>
          <storetype>PKCS11</storetype>
          <provider>SunPKCS11</provider>
       </keystore>
@@ -274,5 +300,8 @@ signature services.
 The above example illustrates dynamically loading the Sun PKCS11 provider and supplying it with needed
 configuration information. It also shows us specifying the PKCS11 keystore type along with an optional,
 and probably unnecessary provider name.
+
+This differs from the standard jarsigner in that the keyword `NONE` is not necessary. The absence of the
+path parameter is sufficient to indicate no underlying file is needed for this keystore impl.
 
 For more information please see the [JDK PKCS11 Docs](https://docs.oracle.com/javase/8/docs/technotes/guides/security/p11guide.html)
