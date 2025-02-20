@@ -93,8 +93,8 @@ VM's Security context.
 Identity Stores
 ---------------
 
-The Java Jarsigner classifies a KeyStore as the basis for the signer identity. Generally, this
-store will contain both the private key used for signing as well as the certificate chain issued
+The Java Jarsigner utilizes a KeyStore as the basis for the signer identity. Generally, this
+store will contain both the private key used for signing and the certificate chain issued
 by a certificate authority.
 
 Many modern FIPS compliant hardware systems do not have the ability to store and maintain the
@@ -102,10 +102,13 @@ certificate chain associated with the private key. That is certainly true of the
 Service  (KMS). This implementation allows you to define both parts of the identity independently:
 
 ```xml
+    <configuration>
       <keystore>
         <storetype>KMS</storetype>
       </keystore>
       <certchain>kms-rsa4096-certchain.pem</certchain>
+      <alias>RSA4096</alias>
+    </configuration>
 ```
 
 In the above example the keystore is defined with a specific `storetype` name and NO underlying file.
