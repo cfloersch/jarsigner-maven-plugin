@@ -7,27 +7,21 @@
 package org.xpertss.jarsigner;
 
 
+import org.xpertss.crypto.utils.CertOrder;
+import org.xpertss.crypto.utils.CertificateUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.Security;
-import java.security.UnrecoverableEntryException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  *  Used to parse arguments into an Identity which is loaded from an underlying KeyStore and or a
@@ -196,42 +190,45 @@ public class IdentityBuilder {
             throw new NoSuchFileException("The keystore file could not be found");
          }
 
-         KeyStore.PasswordProtection pass = (keyPass != null) ? keyPass : storePass;
-         KeyStore.Entry entry = store.getEntry(alias, pass);
-         if(!(entry instanceof KeyStore.PrivateKeyEntry)) {
-            throw new UnrecoverableKeyException(String.format("Alias %s entry is not a PrivateKey entry", alias));
-         }
-         KeyStore.PrivateKeyEntry priKeyEntry = (KeyStore.PrivateKeyEntry) entry;
-
-         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
          List<X509Certificate> chain = null;
-         if(certChain != null) {
+         PrivateKey privateKey = null;
+
+         KeyStore.PasswordProtection pass = (keyPass != null) ? keyPass : storePass;
+         if(certChain == null) {
+            KeyStore.Entry entry = store.getEntry(alias, pass);
+            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
+               throw new UnrecoverableKeyException(String.format("Alias %s entry is not a PrivateKey entry", alias));
+            }
+            KeyStore.PrivateKeyEntry priKeyEntry = (KeyStore.PrivateKeyEntry) entry;
+            chain = Arrays.asList(CertificateUtils.toX509Chain(priKeyEntry.getCertificateChain()));
+            privateKey = priKeyEntry.getPrivateKey();
+         } else {
+            Key key = store.getKey(alias, (pass != null) ? pass.getPassword() : null);
+            if(key instanceof PrivateKey) {
+               privateKey = (PrivateKey) key;
+            } else {
+               throw new UnrecoverableKeyException(String.format("Alias %s entry is not a PrivateKey entry", alias));
+            }
+
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             try(InputStream input = Files.newInputStream(certChain)) {
                Collection<? extends Certificate> certs = certificateFactory.generateCertificates(input);
-               chain = certs.stream()
-                       .map(cert -> (X509Certificate) cert)
-                       .collect(Collectors.toList());
+               chain = Arrays.asList(CertificateUtils.toX509Chain(certs));
             }
-         } else {
-            List<Certificate> certs = Arrays.asList(priKeyEntry.getCertificateChain());
-            chain = certs.stream()
-                                .map(cert -> (X509Certificate) cert)
-                                .collect(Collectors.toList());
          }
-
 
          if(chain.isEmpty()) {
             throw new CertificateException("No signing certificate found");
+         } else {
+            chain = CertOrder.Forward.convertTo(chain);
          }
-
 
          if(strict && trustStore != null) {
             trustStore.validate(chain, KeyUsage.CodeSigning);
          }
 
-         PrivateKey privateKey = priKeyEntry.getPrivateKey();
-
          final List<X509Certificate> certChain = chain;
+         final PrivateKey key = privateKey;
          return new Identity() {
             @Override
             public String getName()
@@ -242,7 +239,7 @@ public class IdentityBuilder {
             @Override
             public PrivateKey getPrivateKey()
             {
-               return privateKey;
+               return key;
             }
 
             @Override
@@ -258,7 +255,7 @@ public class IdentityBuilder {
             }
 
             @Override
-            public String toString() { return String.format("%s (%s)", alias, privateKey.getAlgorithm()); }
+            public String toString() { return String.format("%s (%s)", alias, key.getAlgorithm()); }
          };
       } finally {
          destroy(storePass);

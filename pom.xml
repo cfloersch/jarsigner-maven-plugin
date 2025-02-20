@@ -173,6 +173,7 @@
                      <properties>
                         <maven.compiler.source>${invoker.maven.compiler.source}</maven.compiler.source>
                         <maven.compiler.target>${invoker.maven.compiler.target}</maven.compiler.target>
+                        <aws.region>us-east-1</aws.region>
                      </properties>
                   </configuration>
                   <executions>

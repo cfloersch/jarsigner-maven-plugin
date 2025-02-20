@@ -3,6 +3,7 @@ package org.xpertss.crypto.utils;
 import java.security.cert.CertPath;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collection;
 
 public final class CertificateUtils {
@@ -45,6 +46,21 @@ public final class CertificateUtils {
     public static X509Certificate[] toX509Chain(Collection<? extends Certificate> chain)
     {
         return chain.stream()
+                .map(cert -> (X509Certificate) cert)
+                .toArray(X509Certificate[]::new);
+    }
+
+
+    /**
+     * Streams through the certificates in the {@code Chain} converting them
+     * to X509Certificates, and then collecting them into an array to return.
+     *
+     * @param chain The certificate chain to convert
+     * @throws ClassCastException if the certificates are not X509
+     */
+    public static X509Certificate[] toX509Chain(Certificate[] chain)
+    {
+        return Arrays.stream(chain)
                 .map(cert -> (X509Certificate) cert)
                 .toArray(X509Certificate[]::new);
     }
