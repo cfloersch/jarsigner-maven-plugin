@@ -36,7 +36,7 @@ public final class CertificateUtils {
     }
 
     /**
-     * Streams through the certificates in the {@link CertPath} converting them
+     * Streams through the certificates in the {@code Chain} converting them
      * to X509Certificates, and then collecting them into an array to return.
      *
      * @param chain The certificate chain to convert
