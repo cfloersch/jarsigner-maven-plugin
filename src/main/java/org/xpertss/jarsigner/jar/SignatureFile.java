@@ -129,9 +129,9 @@ public class SignatureFile {
          signer.setEncryptedDigest(sigbytes);
 
          if (tsaSigner != null) {
-            byte[] ts = tsaSigner.stamp(sigbytes);
+            ContentInfo ts = tsaSigner.stamp(sigbytes);
             ASN1ObjectIdentifier oid = new ASN1ObjectIdentifier("1.2.840.113549.1.9.16.2.14");
-            Attribute unauth = new Attribute(oid, new ASN1OctetString(ts));
+            Attribute unauth = new Attribute(oid, ts);
             signer.addUnauthenticatedAttribute(unauth);
          }
 

@@ -166,7 +166,7 @@ public class Certificates extends ASN1SetOf {
             next = cert.getIssuerX500Principal();
          }
       }
-      return null;
+      return (chain.isEmpty()) ? null : Collections.unmodifiableList(chain);
    }
 
    /**
@@ -282,6 +282,11 @@ public class Certificates extends ASN1SetOf {
             throw new ASN1Exception(e);
          }
       }
+
+      if(CertOrder.of(certs) == CertOrder.Forward) {
+         Collections.reverse(certs);
+      }
+
    }
 
 

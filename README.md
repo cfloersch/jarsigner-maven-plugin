@@ -40,7 +40,7 @@ Example usage
           <alias>test-01</alias>
           <sigfile>TESTING</sigfile>
           <signature>
-            <algorithm>SHA386withRSA</algorithm>
+            <algorithm>SHA384withRSA</algorithm>
             <provider>KMS</provider>
           </signature>
           <processMainArtifact>false</processMainArtifact>
@@ -152,13 +152,13 @@ as a "proof of when the file was signed" even after the certificate expires.
           <tsa>
              <uri>http://timestamp.digicert.com</uri>
              <policyId>2.16.840.1.114412.7.1</policyId>
-             <digestAlg>SHA-386</digestAlg>
+             <digestAlg>SHA-384</digestAlg>
           </tsa>
        </configuration>
 ```
 
 The above example uses the digicert timestamp authority to timestamp our signatures. The policyId
-is specific to digicert and we are requesting they use the SHA-386 digest algorithm.
+is specific to digicert and we are requesting they use the SHA-384 digest algorithm.
 
 
 Compatibility
@@ -186,7 +186,7 @@ do something like the following:
           <tsa>
              <uri>http://timestamp.digicert.com</uri>
              <policyId>2.16.840.1.114412.7.1</policyId>
-             <digestAlg>SHA-386</digestAlg>
+             <digestAlg>SHA-384</digestAlg>
           </tsa>
           <clean>true</clean>
           <strict>true</strict>
@@ -231,7 +231,7 @@ and the key is really just a pointer to a network resource.
       </keystore>
       <alias>test-01</alias>
       <signature>
-         <algorithm>SHA386withRSA</algorithm>
+         <algorithm>SHA384withRSA</algorithm>
          <provider>KMS</provider>
       </signature>
       <digest>

@@ -1,9 +1,6 @@
 TODO
-  Add better tests for Timestamp Attributes in SignatureBlock
   Test Maven Plugins
      Concurrency of Signing???
-  Modify Integration Tests
-     Use Apache jarsigner to sign and my signer to verify
 
 For the trust store do I also need a storetype and storepass???
     Is it sufficiently safe for concurrency?
@@ -12,3 +9,54 @@ When it comes to certificate chain (or path) building I currently
  use the Issuer/Subject name chaining method. A better model might
  be to use the AuthorityKeyIdentifier and SubjectKeyIdentifier that
  are generally included as X509 Extensions.
+
+
+
+
+
+
+NOTE: I am considering NOT implementing a verification phase as a FIPS compliant
+public key is not a thing. The standard maven jar verifier would probably suffice.
+
+
+So when it comes to verification, verifying the signature block, iterating the
+entries and verifying the Signature file/manifest digest for each. And then
+based on options:
+
+Output
+[INFO] - Signed by "CN=Simulcast, O=Xpertss, C=US"
+[INFO]     Digest algorithm: SHA-256
+[INFO]     Signature algorithm: SHA256withRSA, 1024-bit key
+[INFO]   Timestamped by "CN=DigiCert Timestamp 2024, O=DigiCert, C=US" on Thu Feb 20 19:15:56 UTC 2025
+[INFO]     Timestamp digest algorithm: SHA-384
+[INFO]     Timestamp signature algorithm: SHA384withRSA, 4096-bit key
+
+IF CERTS is specified
+[INFO]       >>> Signer
+[INFO]       X.509, CN=Simulcast, O=Xpertss, C=US
+[INFO]       [certificate is valid from 1/18/25 3:02 PM to 2/12/66 3:02 PM]
+[INFO]       X.509, CN=Xpertss Root CA, OU=Certificate Authority, O=Xpert Solution Services, L=Atlanta, ST=GA, C=US
+[INFO]       [certificate is valid from 12/12/24 5:21 PM to 12/7/44 5:21 PM]
+[INFO]       [Invalid certificate chain: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target]
+[INFO]       >>> TSA
+[INFO]       X.509, CN=DigiCert Timestamp 2024, O=DigiCert, C=US
+[INFO]       [certificate is valid from 9/25/24 8:00 PM to 11/25/35 6:59 PM]
+[INFO]       X.509, CN=DigiCert Trusted G4 RSA4096 SHA256 TimeStamping CA, O="DigiCert, Inc.", C=US
+[INFO]       [certificate is valid from 3/22/22 8:00 PM to 3/22/37 7:59 PM]
+[INFO]       X.509, CN=DigiCert Trusted Root G4, OU=www.digicert.com, O=DigiCert Inc, C=US
+[INFO]       [certificate is valid from 7/31/22 8:00 PM to 11/9/31 6:59 PM]
+
+I am not going to output info on each ENTRY
+
+[INFO] jar verified.
+[INFO]
+[INFO] Warning:
+[INFO] This jar contains entries whose certificate chain is invalid. Reason: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+[INFO]
+[INFO] The signer certificate will expire on 2044-12-07.
+[INFO] The timestamp will expire on 2031-11-09.
+
+
+I should probably figure out what it looks like when there are TWO signatures on the
+JAR.
+

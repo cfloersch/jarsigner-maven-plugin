@@ -101,17 +101,19 @@ public class JavaArchive {
       String digestName = String.format("%s-Digest", md.getAlgorithm());
       Map<String,Section> sections = new LinkedHashMap<>();
       for(ZipEntry ze : entries) {
-         Section section = getManifest().getSection(ze.getName());
-         String current = section.getAttribute(digestName);
-         try(InputStream in = getInputStream(ze)) {
-            byte[] digest = ArchiveUtils.readDigest(md, in);
-            String actual = encoder.encodeToString(digest);
-            if(current == null || !current.equals(actual)) {
-               section.setAttribute(digestName, actual);
+         if(!ze.isDirectory()) {
+            Section section = getManifest().getSection(ze.getName());
+            String current = section.getAttribute(digestName);
+            try (InputStream in = getInputStream(ze)) {
+               byte[] digest = ArchiveUtils.readDigest(md, in);
+               String actual = encoder.encodeToString(digest);
+               if (current == null || !current.equals(actual)) {
+                  section.setAttribute(digestName, actual);
+               }
             }
+            Section sigsec = section.digest(md);
+            sections.put(sigsec.getName(), sigsec);
          }
-         Section sigsec = section.digest(md);
-         sections.put(sigsec.getName(), sigsec);
       }
       String mainDigest = encoder.encodeToString(getManifest().getMain().digest(md));
       String manifestDigest = encoder.encodeToString(getManifest().digest(md));

@@ -9,7 +9,7 @@
   <packaging>jar</packaging>
 
   <description>
-    Tests the signing of a simple JAR.
+    Tests the signing of a simple JAR with Timestamp.
   </description>
 
   <properties>
@@ -62,6 +62,11 @@
             <storepass>${keystore.storepass}</storepass>
           </keystore>
           <sigfile>TESTING</sigfile>
+          <tsa>
+            <uri>http://timestamp.digicert.com</uri>
+            <policyId>2.16.840.1.114412.7.1</policyId>
+            <digestAlg>SHA-384</digestAlg>
+          </tsa>
         </configuration>
         <executions>
           <execution>

@@ -9,6 +9,7 @@ package org.xpertss.jarsigner.tsa;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.xpertss.crypto.pkcs.pkcs7.ContentInfo;
+import org.xpertss.crypto.pkcs.pkcs7.SignedData;
 import org.xpertss.crypto.pkcs.tsp.TSTokenInfo;
 import org.xpertss.crypto.pkcs.tsp.TimeStampRequest;
 import org.xpertss.crypto.pkcs.tsp.TimeStampResponse;
@@ -42,7 +43,7 @@ public class HttpTimestamperTest {
       };
 
    @Test
-   @Disabled
+   //@Disabled
    public void testTimestampResponses() throws Exception
    {
       SecureRandom random = new SecureRandom();
@@ -66,6 +67,9 @@ public class HttpTimestamperTest {
          ContentInfo content = response.getToken();
          assertNotNull(content);
          assertEquals("1.2.840.113549.1.7.2", content.getContentType().toString());
+         SignedData signedData = (SignedData) content.getContent();
+         assertNotNull(signedData);
+         //System.out.println(signedData.getContentType());
       }
    }
 

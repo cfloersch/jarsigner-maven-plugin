@@ -159,8 +159,9 @@ public class ArchiveUtils {
       Objects.requireNonNull(inputStream, "inputStream");
       md.reset();
       byte[] buffer = new byte[8192];
-      while (inputStream.read(buffer) != -1) {
-         md.update(buffer);
+      int len = 0;
+      while ((len = inputStream.read(buffer)) != -1) {
+         md.update(buffer, 0, len);
       }
       return md.digest();
    }

@@ -10,7 +10,6 @@ package org.xpertss.jarsigner;
 
 
 import org.apache.maven.shared.utils.StringUtils;
-import org.xpertss.crypto.asn1.AsnUtil;
 import org.xpertss.crypto.pkcs.pkcs7.ContentInfo;
 import org.xpertss.crypto.pkcs.pkcs7.SignedData;
 import org.xpertss.crypto.pkcs.pkcs7.SignerInfo;
@@ -37,6 +36,9 @@ import java.util.Objects;
  * @see <a href="https://www.ietf.org/rfc/rfc5035.txt">RFC-5035</a>
  */
 public final class TsaSigner {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TsaSigner.class);
+
 
     private final SecureRandom random = new SecureRandom();
 
@@ -99,7 +101,7 @@ public final class TsaSigner {
      * @param signature The signature to timestamp
      * @return A BER encoded ContentInfo structure.
      */
-    public byte[] stamp(byte[] signature)
+    public ContentInfo stamp(byte[] signature)
         throws CertificateException, SignatureException, IOException
     {
         BigInteger NONCE = new BigInteger(64, random);
@@ -114,9 +116,15 @@ public final class TsaSigner {
 
             HttpTimestamper timestamper = new HttpTimestamper(uri, proxy);
             TimeStampResponse response = timestamper.generateTimestamp(request);
-            if (response.getStatusCode() > 1) {
+            int code = response.getStatusCode();
+            if (code > 1) {
                 throw new IOException("Error generating timestamp: " + response.getStatusCodeAsText());
+            } else if (code == 1) {
+                log.warn("TSA Modified Response");
             }
+
+            ContentInfo content = response.getToken();
+            log.debug("TSA Response Content ID: " + content.getContentType());
 
             // TODO If granted with Mods some of the following will likely fail
             TSTokenInfo tstInfo = response.getTimestampTokenInfo();
@@ -141,7 +149,6 @@ public final class TsaSigner {
                 throw new SignatureException("Nonce changed in timestamp token");
             }
 
-            ContentInfo content = response.getToken();
             SignedData singedData = (SignedData) content.getContent();
             for (SignerInfo signer : singedData.getSignerInfos()) {
                 List<X509Certificate> chain = singedData.getCertificates(signer);
@@ -150,7 +157,7 @@ public final class TsaSigner {
                     trustStore.validate(chain, KeyUsage.Timestamping);
                 }
             }
-            return AsnUtil.encode(content);
+            return content;
         } catch(NoSuchAlgorithmException e) {
             throw new SignatureException(e);
         } catch(CertPathValidatorException e) {

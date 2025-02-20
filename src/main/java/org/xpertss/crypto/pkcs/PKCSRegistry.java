@@ -15,7 +15,7 @@ public class PKCSRegistry extends OIDRegistry {
     * that represent and implement the ASN.1 structure with the
     * respective OIDs.
     */
-   public static final String RN = "META-INF/pkcs/oid";
+   public static final String RN = "/META-INF/pkcs/oid";
 
    /**
     * The mapping from OID to ASN.1 types implementing encoding and decoding of the
@@ -37,7 +37,7 @@ public class PKCSRegistry extends OIDRegistry {
    {
 
       int n = 0;
-      InputStream in = ClassLoader.getSystemResourceAsStream(RN + "0.map");
+      InputStream in = PKCSRegistry.class.getResourceAsStream(RN + "0.map");
 
       while (in != null) {
          try {
@@ -65,8 +65,9 @@ public class PKCSRegistry extends OIDRegistry {
             } catch (IOException e) { }
          }
          n++;
-         in = ClassLoader.getSystemResourceAsStream(RN + n + ".map");
+         in = PKCSRegistry.class.getResourceAsStream(RN + n + ".map");
       }
+      //System.err.format("Loaded %d oid mappings!%n", map_.size());
    }
 
 
