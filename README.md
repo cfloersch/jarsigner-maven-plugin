@@ -112,7 +112,7 @@ Service  (KMS). This implementation allows you to define both parts of the ident
 
 In the above example the keystore is defined with a specific `storetype` name and NO underlying file.
 The keystore provides access to the underlying private key in a network centric and hardware manner.
-The associated certificate is specified separately from a file located on the disk. In this case the
+The associated certificate is specified separately in a file located on the disk. In this case the
 credentials necessary to access the keystore are provided in a more AWS centric way and do not need
 to be included in the maven configuration.
 
@@ -140,9 +140,9 @@ Timestamp Authorities
 ---------------------
 
 [RFC5035](https://www.ietf.org/rfc/rfc5035.txt) defines a network centric timestamping service
-that can be used to timestamp our signatures. When you timestamp a JAR file using a jarsigner, 
-it essentially records the exact time the file was signed, which ensures that even if the code
-signing certificate used to sign it expires later on, the signature remains valid and trusted, 
+that can be used to timestamp our signatures. When you timestamp a signature, it essentially 
+records the exact time the file was signed, which ensures that even if the code signing 
+certificate used to sign it expires later on, the signature remains valid and trusted, 
 preventing warnings or issues when users try to run the application; in simpler terms, it acts 
 as a "proof of when the file was signed" even after the certificate expires.
 
@@ -165,8 +165,7 @@ Compatibility
 -------------
 
 This implementation supports all of the default capabilities of the Apache maven jar signer, although
-some of the arguments may be slightly different. For example to define a timestamp authority you would
-do something like the following:
+some of the arguments may be slightly different. For example:
 
 ```xml
     <plugin>
@@ -202,7 +201,7 @@ do something like the following:
     </plugin>
 ```
 
-In the above example we use a standard keystore model along with a timestamp authority. What is different is the
+In the above example we use a custom keystore model along with a timestamp authority. You will also notice the
 `clean` property which implies that any existing signature should be removed as we sign the archive with a new
 signature. Also notice the `strict` parameter. This parameter will force the jarsigner to fail if any of the 
 keys used in the process are invalid, unusable for code signing, untrusted, etc. The default implementation will

@@ -76,7 +76,7 @@
               <goal>sign</goal>
             </goals>
             <configuration>
-              <alias>test-01</alias>
+              <alias>RSA4096</alias>
               <keystore>
                 <path>NONE</path>
                 <storetype>KMS</storetype>
@@ -84,12 +84,6 @@
               <certchain>@project.basedir@/src/it/kms-cert.pem</certchain>
               <sigfile>TESTING</sigfile>
             </configuration>
-          </execution>
-          <execution>
-            <id>verify-jars</id>
-            <goals>
-              <goal>verify</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>

@@ -2,6 +2,11 @@ TODO
   Test Maven Plugins
      Concurrency of Signing???
 
+I state that if strict = false it will warn on invalid certs rather
+  than fail. Currently, it skips those tests altogether so no warn.
+  Fix that!
+
+
 For the trust store do I also need a storetype and storepass???
     Is it sufficiently safe for concurrency?
 
