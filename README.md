@@ -30,7 +30,7 @@ Example usage
           <dependency>
             <groupId>org.xpertss</groupId>
             <artifactId>aws-kms</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -78,7 +78,7 @@ any build machine.
           <dependency>
             <groupId>org.xpertss</groupId>
             <artifactId>aws-kms</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
           </dependency>
         </dependencies>
         <configuration>
