@@ -10,6 +10,8 @@
 
   <description>
     Tests the signing of a simple JAR using an attached provider.
+    This requires a AWS credentials file in the users home directory and a key in the associated account named RSA4096.
+    It is currently configured to use us-east-1 in the core project pom file.
   </description>
 
   <properties>
