@@ -207,15 +207,17 @@ public class IdentityBuilderTest {
    public void testStrictBuild_ValidCodeSingingNoTrustStore()
       throws Exception
    {
+
       TrustStore trust = TrustStore.Builder.create().build();
 
       IdentityBuilder builder = new IdentityBuilder();
       CertPathValidatorException thrown = assertThrows(CertPathValidatorException.class, ()-> {
          builder.trustStore(trust).strict(true)
-                     .keyStore(Paths.get("src", "test", "keystore.p12"))
-                     .storeType("PKCS12")
-                     .storePass(password("changeme"))
-                     .alias("code").build();
+                     .keyStore(Paths.get("src", "test", "keystore"))
+                     .storeType("JKS")
+                     .storePass(password("changeit"))
+                     .keyPass(password("key-passwd"))
+                     .alias("foo_alias").build();
       });
       assertNotNull(thrown);
    }

@@ -78,6 +78,7 @@
         <artifactId>maven-jarsigner-plugin</artifactId>
         <version>3.1.0</version>
         <configuration>
+          <keystore>@project.basedir@/src/it/truststore</keystore>
           <verbose>true</verbose>
           <certs>true</certs>
         </configuration>
