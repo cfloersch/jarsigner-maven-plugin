@@ -7,6 +7,11 @@ manage the dependency tree.
 Most users will probably be fine using the standard Java JCE or PKCS11 implementations. However, for
 those that would like to do builds on any machine utilizing services like AWS KMS, this implementation
 is for you.
+           
+
+
+Basic Usage
+-----------
 
 At it's heart this library allows you to include third party JCE Providers using Maven's standard 
 dependency management model. It provides a more robust mechanism for dynamically installing those 
@@ -20,12 +25,12 @@ Example usage
       <plugin>
         <groupId>org.xpertss.maven.plugins</groupId>
         <artifactId>jarsigner-maven-plugin</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.0</version>
         <dependencies>
           <dependency>
             <groupId>org.xpertss</groupId>
             <artifactId>aws-kms</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -68,12 +73,12 @@ any build machine.
       <plugin>
         <groupId>org.xpertss.maven.plugins</groupId>
         <artifactId>jarsigner-maven-plugin</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.0</version>
         <dependencies>
           <dependency>
             <groupId>org.xpertss</groupId>
             <artifactId>aws-kms</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -182,7 +187,7 @@ some of the arguments may be slightly different. For example:
     <plugin>
        <groupId>org.xpertss.maven.plugins</groupId>
        <artifactId>jarsigner-maven-plugin</artifactId>
-       <version>1.0.0-SNAPSHOT</version>
+       <version>1.1.0</version>
        <configuration>
           <keystore>
              <path>${keystore.file}</path>
