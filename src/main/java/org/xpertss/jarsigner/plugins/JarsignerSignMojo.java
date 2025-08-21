@@ -38,6 +38,11 @@ public class JarsignerSignMojo extends AbstractJarsignerMojo {
 
 
     /**
+     * The alias to the desired key pair within the keystore.
+     * <p/>
+     * This is also used as the name of the signer if a sigfile is not explicitly
+     * specified.
+     * <p/>
      * See <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      */
     @Parameter(property = "jarsigner.alias")
@@ -58,7 +63,11 @@ public class JarsignerSignMojo extends AbstractJarsignerMojo {
 
 
     /**
-     * Location of the extra certificate chain file. See
+     * Location of the extra certificate chain file. This will be used when the
+     * keystore containing the private key does not also contain the public key
+     * certificate, or elements of the certificate chain.
+     * <p/>
+     * See
      * <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      */
     @Parameter(property = "jarsigner.certchain", required = false)
@@ -66,6 +75,8 @@ public class JarsignerSignMojo extends AbstractJarsignerMojo {
 
 
     /**
+     * The password to unlock the private key associated with the alias.
+     * <p/>
      * See <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      */
     @Parameter(property = "jarsigner.keypass")
@@ -73,6 +84,12 @@ public class JarsignerSignMojo extends AbstractJarsignerMojo {
 
 
     /**
+     * The jarsigner command also attempts to validate the signer's certificate
+     * after signing. If there is a validation error or any other problem, the
+     * command generates warning messages. If you specify the -strict option,
+     * then the command treats severe warnings as errors and fails the signing
+     * operation.
+     * <p/>
      * See <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      */
     @Parameter(property = "jarsigner.strict", defaultValue = "false")
@@ -81,6 +98,10 @@ public class JarsignerSignMojo extends AbstractJarsignerMojo {
 
 
     /**
+     * The name applied to the .SF and .DSA/.RSA files within the JAR file.
+     * <p/>
+     * If not specified, the alias is used.
+     * <p/>
      * See <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jarsigner.html#Options">options</a>.
      */
     @Parameter(property = "jarsigner.sigfile")
@@ -107,9 +128,9 @@ public class JarsignerSignMojo extends AbstractJarsignerMojo {
 
 
     /**
-     * Indicates whether existing signatures should be removed from the processed JAR files
-     * prior to signing them. If enabled, the resulting JAR will appear as being signed only
-     * once.
+     * Indicates whether existing signatures should be removed from the
+     * processed JAR files prior to signing them. If enabled, the resulting
+     * JAR will appear as being signed only once.
      */
     @Parameter(property = "jarsigner.clean", defaultValue = "false")
     private boolean clean;

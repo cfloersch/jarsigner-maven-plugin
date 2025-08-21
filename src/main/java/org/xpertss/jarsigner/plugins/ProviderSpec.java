@@ -20,24 +20,38 @@ public class ProviderSpec {
     private String argument;
 
 
-    
-
+    /**
+     * The fully qualified classname of the Provider to instantiate.
+     */
     public String getClassName()
     {
         return classname;
     }
 
+    /**
+     * The fully qualified classname of the Provider to instantiate.
+     */
     public void setClassName(String classname)
     {
         this.classname = classname;
     }
 
 
+    /**
+     * A String argument to init the newly loaded Provider with.
+     * <p/>
+     * The format and content of this argument is provider specific.
+     */
     public String getArgument()
     {
         return argument;
     }
 
+    /**
+     * A String argument to init the newly loaded Provider with.
+     * <p/>
+     * The format and content of this argument is provider specific.
+     */
     public void setArgument(String argument)
     {
         this.argument = argument;
