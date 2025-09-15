@@ -1,0 +1,73 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+import java.util.jar.*;
+
+File targetDir = new File( basedir, "target" );
+
+File mainJarFile = new File( targetDir, "test-1.0.jar" );
+System.out.println( "Checking for existence of " + mainJarFile );
+if ( !mainJarFile.isFile() )
+{
+    throw new Exception( "missing " + mainJarFile );
+}
+
+
+File depDir = new File( targetDir, "deps" );
+
+File jt400JarFile = new File( depDir, "jt400-10.2.jar" );
+System.out.println( "Checking for existence of " + jt400JarFile );
+if ( !jt400JarFile.isFile() )
+{
+    throw new Exception( "missing " + jt400JarFile );
+}
+
+
+JarFile jt400Jar = new JarFile( jt400JarFile );
+
+System.out.println( "Checking for existence of " + jt400JarFile.getName() + "!/META-INF/TESTING.SF" );
+if ( jt400Jar.getEntry( "META-INF/TESTING.SF" ) == null )
+{
+    throw new Exception( "missing " + jt400JarFile.getName() + "!/META-INF/TESTING.SF" );
+}
+
+System.out.println( "Checking for existence of " + jt400JarFile.getName() + "!/META-INF/TESTING.RSA" );
+if ( jt400Jar.getEntry( "META-INF/TESTING.RSA" ) == null )
+{
+    throw new Exception( "missing " + jt400JarFile.getName() + "!/META-INF/TESTING.RSA" );
+}
+
+
+Manifest manifest = jt400Jar.getManifest();
+Map entries = manifest.getEntries();
+
+
+
+for (Iterator it = entries.entrySet().iterator(); it.hasNext(); ) {
+    Map.Entry entry = (Map.Entry) it.next();
+    Attributes attrs = (Attributes) entry.getValue();
+    if (attrs.getValue("SHA1-Digest") == null && attrs.getValue("SHA-256-Digest") == null) {
+        throw new Exception("Missing digest for " + entry.getKey());
+    }
+}
+
+jt400Jar.close();
+
+return true;

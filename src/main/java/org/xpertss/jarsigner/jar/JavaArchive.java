@@ -101,8 +101,9 @@ public class JavaArchive {
       String digestName = String.format("%s-Digest", md.getAlgorithm());
       Map<String,Section> sections = new LinkedHashMap<>();
       for(ZipEntry ze : entries) {
-         if(!ze.isDirectory()) {
-            Section section = getManifest().getSection(ze.getName());
+         // Alternative is to remove the section from the manifest if it is a directory
+         if(!ze.isDirectory() || manifest.exists(ze.getName())) {
+            Section section = manifest.getSection(ze.getName());
             String current = section.getAttribute(digestName);
             try (InputStream in = getInputStream(ze)) {
                byte[] digest = ArchiveUtils.readDigest(md, in);
