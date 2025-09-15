@@ -35,7 +35,9 @@ Example usage
         </dependencies>
         <configuration>
           <providers>
-            <classname>xpertss.crypto.kms.provider.KmsProvider</classname>
+            <provider>  
+              <classname>xpertss.crypto.kms.provider.KmsProvider</classname>
+            </provider>
           </providers>
           <keystore>
             <storetype>KMS</storetype>
@@ -83,8 +85,10 @@ any build machine.
         </dependencies>
         <configuration>
           <providers>
-            <classname>xpertss.crypto.kms.provider.KmsProvider</classname>
-            <argument>SomeArgIfNeeded - Possibly AWS Creds</argument>
+            <provider>    
+              <classname>xpertss.crypto.kms.provider.KmsProvider</classname>
+              <argument>SomeArgIfNeeded - Possibly AWS Creds</argument>
+            </provider>
           </providers>
         </configuration>
       </plugin>
@@ -290,8 +294,10 @@ signature services.
 ```xml
    <configuration>
       <providers>
+        <provider>
           <classname>sun.security.pkcs11.sunPKCS11</classname>
           <argument>path/to/pkcs11/properties.cfg</argument>
+        </provider>          
       </providers>
       <keystore>
          <storetype>PKCS11</storetype>
