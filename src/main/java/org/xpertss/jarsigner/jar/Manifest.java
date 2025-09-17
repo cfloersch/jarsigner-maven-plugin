@@ -238,10 +238,13 @@ public final class Manifest {
 
       try(BufferedInputStream bin = new BufferedInputStream(in)) {
          byte[] mainBytes = findNextSection(bin);
+
+
+
          main = Main.parse(mainBytes);
          while(main != null) {
             byte[] sectionBytes = findNextSection(bin);
-            if(sectionBytes.length == 0) break;
+            if(sectionBytes.length <= 2) break;
             Section section = Section.parse(sectionBytes);
             if(section != null) {
                if (clean) section.clean();
@@ -280,6 +283,7 @@ public final class Manifest {
       }
 
       // If no double line break found, return everything read (assuming single section)
+      baos.write(new byte[] { (byte) 0x0D, (byte) 0x0A }); // Ensure it ends with CRLF
       return baos.toByteArray();
    }
 
