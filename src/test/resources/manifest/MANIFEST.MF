@@ -1804,4 +1804,3 @@ SHA-256-Digest: i9bgkfZzfJPtOazGA/b3mhpcXYApDM2Mj0Zmfz30CsU=
 
 Name: com/manheim/simulcast/biddisplay/standard/lightYellowOn.jpg
 SHA-256-Digest: AfSUZXxH2c8XWw7eLyCtzwiyjDV30s0uzRcSle2oifE=
-

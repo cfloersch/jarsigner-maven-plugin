@@ -116,6 +116,7 @@ public class SignatureFile {
    {
       signature.update(main.getEncoded());
       for(Section section : sections.values()) {
+         signature.update(ArchiveUtils.NEWLINE);
          signature.update(section.getEncoded());
       }
       byte[] sigbytes = signature.sign();
@@ -167,6 +168,7 @@ public class SignatureFile {
    {
       out.write(main.getEncoded());
       for(Section section : sections.values()) {
+         out.write(ArchiveUtils.NEWLINE);
          out.write(section.getEncoded());
       }
       out.flush();

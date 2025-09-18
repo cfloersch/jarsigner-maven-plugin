@@ -79,6 +79,7 @@ public final class Main {
    {
       md.reset();
       md.update(getEncoded());
+      md.update(ArchiveUtils.NEWLINE);
       return md.digest();
    }
 

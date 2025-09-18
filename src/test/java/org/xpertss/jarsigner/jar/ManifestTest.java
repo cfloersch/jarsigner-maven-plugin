@@ -41,8 +41,15 @@ class ManifestTest {
       Manifest manifest = Manifest.parse(new ByteArrayInputStream(manifestBytes));
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       manifest.writeTo(baos);
+      byte[] reencoded = baos.toByteArray();
+
+      byte[] data = new byte[10];
+      System.arraycopy(manifestBytes, manifestBytes.length - data.length, data, 0, 10);
+      System.arraycopy(reencoded, reencoded.length - data.length, data, 0, 10);
+
       assertNotEquals(0, manifestBytes.length);
-      assertArrayEquals(manifestBytes, baos.toByteArray());
+      assertNotEquals(0, reencoded.length);
+      assertArrayEquals(manifestBytes, reencoded);
    }
 
    @Test
@@ -75,7 +82,7 @@ class ManifestTest {
       Manifest manifest = Manifest.parse(manifestFileStream());
       MessageDigest md = MessageDigest.getInstance("SHA-256");
       byte[] digest = manifest.digest(md);
-      assertEquals("Kds7VEe/DjHhdchwF3rRwRQUrwwHyMm92Nmi0dCZSZc=", Base64.getEncoder().encodeToString(digest));
+      assertEquals("9z9OZIgr+/0rlq7L993wJ1p4kHCYVsZh9Ej+Lqeh8gs=", Base64.getEncoder().encodeToString(digest));
    }
 
 

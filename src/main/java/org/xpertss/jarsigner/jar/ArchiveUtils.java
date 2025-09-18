@@ -31,6 +31,8 @@ import static java.lang.String.*;
 
 public class ArchiveUtils {
 
+   public static final byte[] NEWLINE = { (byte) 0x0D, (byte) 0x0A };
+
    private static final String META_INF = "META-INF/";
    private static final String SIG_PREFIX = META_INF + "SIG-";
 
@@ -274,7 +276,6 @@ public class ArchiveUtils {
       try(PrintOutputStream out = new PrintOutputStream(8192)) {
          if(name != null && !name.isEmpty()) print(out, "Name", name);
          attributes.forEach((key, value) -> { print(out, key, value); });
-         out.newLine();
          return out.toByteArray();
       } catch(IOException e) {
          throw new InternalError("failure to close nothing");
@@ -319,6 +320,7 @@ public class ArchiveUtils {
 
    private static void print(PrintOutputStream out, String key, String value)
    {
+      // TODO Need to support multiple wraps for lines > 139 chars
       String line = format("%s: %s", key, value);
       if(line.length() > 70) {
          out.println(line.substring(0, 70));
@@ -340,8 +342,6 @@ public class ArchiveUtils {
     * and newlines, unlike PrintStream.
     */
    private static class PrintOutputStream implements Closeable  {
-
-      private static final byte[] NEWLINE = { (byte) 0x0D, (byte) 0x0A };
 
       private final int origSize;
       private byte[] buf;

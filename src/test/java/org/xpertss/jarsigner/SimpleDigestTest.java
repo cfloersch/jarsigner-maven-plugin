@@ -9,7 +9,9 @@ package org.xpertss.jarsigner;
 import org.junit.jupiter.api.Test;
 import org.xpertss.jarsigner.jar.ArchiveUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -29,8 +31,10 @@ public class SimpleDigestTest {
    {
       MessageDigest md = MessageDigest.getInstance("SHA-256");
       byte[] manifest = loadContent();
-      int endOfHeader = findHeaderEnd(manifest, 0);
-      md.update(manifest, 0, endOfHeader);
+      ByteArrayInputStream bais = new ByteArrayInputStream(manifest);
+      byte[] header = findNextSection(bais);
+      md.update(header);
+      md.update(ArchiveUtils.NEWLINE);
       byte[] digest = md.digest();
       String result = Base64.getEncoder().encodeToString(digest);
       assertEquals("KUQaWc0H7aS83+OjigPzkJT/fPgyZp7Zb4k9cvLoVOc=", result);
@@ -45,7 +49,7 @@ public class SimpleDigestTest {
       md.update(manifest, 0, manifest.length);
       byte[] digest = md.digest();
       String result = Base64.getEncoder().encodeToString(digest);
-      assertEquals("Kds7VEe/DjHhdchwF3rRwRQUrwwHyMm92Nmi0dCZSZc=", result);
+      assertEquals("9z9OZIgr+/0rlq7L993wJ1p4kHCYVsZh9Ej+Lqeh8gs=", result);
    }
 
 
@@ -76,10 +80,9 @@ public class SimpleDigestTest {
       byte[] encoded = ArchiveUtils.encodeAttributes("com/manheim/simulcast/cache/Cache.class", attributes);
 
       byte[] manifest = loadContent();
-      int endOfHeader = findHeaderEnd(manifest, 0);
-      int endOfSection = findHeaderEnd(manifest, endOfHeader);
-      byte[] loaded = new byte[endOfSection - endOfHeader];
-      System.arraycopy(manifest, endOfHeader, loaded, 0, loaded.length);
+      ByteArrayInputStream bais = new ByteArrayInputStream(manifest);
+      byte[] header = findNextSection(bais);
+      byte[] loaded = findNextSection(bais);
 
       assertTrue(Arrays.equals(encoded, loaded));
    }
@@ -141,6 +144,33 @@ public class SimpleDigestTest {
       return len;
    }
 
+
+
+    private static byte[] findNextSection(InputStream in) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+        int prev = -1; // Store the previous byte
+        int current;
+        int count = 0;
+
+        while ((current = in.read()) != -1) {
+
+            if (current != '\r' && current != '\n') count = 0;
+            if (prev == '\r' && current == '\n') count++;
+
+            if (count == 2) {
+                break;
+            } else if ((prev == '\n' && current == '\n') || (prev == '\r' && current == '\r')) {
+                baos.write(prev);
+                break;
+            } else if(prev != -1)  {
+                baos.write(prev);
+            }
+
+            prev = current;
+        }
+
+        return baos.toByteArray();
+    }
 
 
 

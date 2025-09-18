@@ -198,6 +198,7 @@ public final class Manifest {
       md.reset();
       md.update(main.getEncoded());
       for(Section section : sections.values()) {
+         md.update(ArchiveUtils.NEWLINE);
          md.update(section.getEncoded());
       }
       // Returns the digest for the entire file
@@ -213,6 +214,7 @@ public final class Manifest {
    {
       out.write(main.getEncoded());
       for(Section section : sections.values()) {
+         out.write(ArchiveUtils.NEWLINE);
          out.write(section.getEncoded());
       }
       out.flush();
@@ -239,12 +241,10 @@ public final class Manifest {
       try(BufferedInputStream bin = new BufferedInputStream(in)) {
          byte[] mainBytes = findNextSection(bin);
 
-
-
          main = Main.parse(mainBytes);
          while(main != null) {
             byte[] sectionBytes = findNextSection(bin);
-            if(sectionBytes.length <= 2) break;
+            if(sectionBytes.length <= 0) break;
             Section section = Section.parse(sectionBytes);
             if(section != null) {
                if (clean) section.clean();
@@ -268,23 +268,33 @@ public final class Manifest {
       int current;
       int count = 0;
 
-      while ((current = in.read()) != -1) {
-         baos.write(current);
+      while (true) {
+         current = in.read();
+
+         if (current == -1) {
+            if (prev != -1) baos.write(prev);
+            break;
+         }
 
          if (current != '\r' && current != '\n') count = 0;
          if (prev == '\r' && current == '\n') count++;
 
-
-         if (count == 2 || (prev == '\n' && current == '\n') || (prev == '\r' && current == '\r')) {
-            return baos.toByteArray();
+         if (count == 2) {
+            break;
+         } else if ((prev == '\n' && current == '\n') || (prev == '\r' && current == '\r')) {
+            baos.write(prev);
+            break;
+         } else if(prev != -1)  {
+            baos.write(prev);
          }
 
          prev = current;
       }
 
-      // If no double line break found, return everything read (assuming single section)
-      baos.write(new byte[] { (byte) 0x0D, (byte) 0x0A }); // Ensure it ends with CRLF
       return baos.toByteArray();
    }
+
+
+
 
 }
