@@ -3,6 +3,12 @@ Add integration tests (Sign)
   -strict fails when using key with no CodeSigning
 
 
+Add integration test to secondary sign
+  aka no changes to manifest
+    both signatures use same digest algs
+    both signatures cover all files
+  Any changes to Manifest as part of serialization will break original signature
+
 
 When it comes to jarsigner mojo, I'd love to learn how to take configuration values
   as multi-faceted inputs like the following:

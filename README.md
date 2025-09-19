@@ -25,7 +25,7 @@ Example usage
       <plugin>
         <groupId>org.xpertss.maven.plugins</groupId>
         <artifactId>jarsigner-maven-plugin</artifactId>
-        <version>1.1.2</version>
+        <version>1.1.3</version>
         <dependencies>
           <dependency>
             <groupId>org.xpertss</groupId>
@@ -75,7 +75,7 @@ any build machine.
       <plugin>
         <groupId>org.xpertss.maven.plugins</groupId>
         <artifactId>jarsigner-maven-plugin</artifactId>
-        <version>1.1.2</version>
+        <version>1.1.3</version>
         <dependencies>
           <dependency>
             <groupId>org.xpertss</groupId>
@@ -191,7 +191,7 @@ some of the arguments may be slightly different. For example:
     <plugin>
        <groupId>org.xpertss.maven.plugins</groupId>
        <artifactId>jarsigner-maven-plugin</artifactId>
-       <version>1.1.2</version>
+       <version>1.1.3</version>
        <configuration>
           <keystore>
              <path>${keystore.file}</path>
